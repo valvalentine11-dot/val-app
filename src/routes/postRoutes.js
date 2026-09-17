@@ -22,13 +22,13 @@ const postValidation = [
   body('tags').optional().isArray().withMessage('tags must be an array of strings'),
 ];
 
-// Public (optionalAuth lets us know if a logged in user liked a post / owns a draft)
+
 router.get('/', optionalAuth, listPublishedPosts);
 router.get('/feed', requireAuth, getFeed);
 router.get('/me', requireAuth, getMyPosts);
 router.get('/:id', optionalAuth, getPost);
 
-// Authenticated
+
 router.post('/', requireAuth, postValidation, createPost);
 router.patch('/:id', requireAuth, postValidation.map((v) => v.optional()), updatePost);
 router.patch('/:id/publish', requireAuth, publishPost);
