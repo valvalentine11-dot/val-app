@@ -3,7 +3,7 @@ const Message = require('../models/Message');
 const User = require('../models/User');
 const { getPagination, buildPaginatedResponse } = require('../utils/paginate');
 
-// POST /api/chat/:id/send - send a message
+
 async function sendMessage(req, res, next) {
   try {
     const errors = validationResult(req);
@@ -30,7 +30,7 @@ async function sendMessage(req, res, next) {
   }
 }
 
-// GET /api/chat/:id - get conversation with a user (paginated)
+
 async function getConversation(req, res, next) {
   try {
     const { page, limit, skip } = getPagination(req.query, 20);
@@ -53,7 +53,7 @@ async function getConversation(req, res, next) {
       Message.countDocuments(filter),
     ]);
 
-    // Mark messages as read
+    
     await Message.updateMany(
       { ...filter, receiver: req.user._id, read: false },
       { read: true }
@@ -65,7 +65,7 @@ async function getConversation(req, res, next) {
   }
 }
 
-// GET /api/chat - list all conversations
+
 async function listConversations(req, res, next) {
   try {
     const { page, limit, skip } = getPagination(req.query, 20);
