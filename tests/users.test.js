@@ -63,9 +63,9 @@ describe('Follow system', () => {
   test('GET /api/users/:id/following is paginated', async () => {
     const { token, user } = await registerUser();
     for (let i = 0; i < 3; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
+     
       const { user: target } = await registerUser();
-      // eslint-disable-next-line no-await-in-loop
+      
       await request(app).post(`/api/users/${target.id}/follow`).set('Authorization', `Bearer ${token}`);
     }
 
