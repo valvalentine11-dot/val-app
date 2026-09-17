@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// text index for search across title & tags; author search is handled separately via username lookup
+
 postSchema.index({ title: 'text', tags: 'text' });
 
 module.exports = mongoose.model('Post', postSchema);
