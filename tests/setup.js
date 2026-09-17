@@ -14,7 +14,7 @@ beforeAll(async () => {
 
 afterEach(async () => {
   const collections = mongoose.connection.collections;
-  // eslint-disable-next-line no-restricted-syntax
+  
   for (const key of Object.keys(collections)) {
     await collections[key].deleteMany({});
   }
