@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SocialHub</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: #0a0e27; color: #e4e6eb; line-height: 1.6; }
+    a { color: #60a5fa; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Auth Pages */
+    .auth-container { min-height: 100vh; display: flex; }
+    .auth-split { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; }
+    .auth-left { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .auth-left h1 { font-size: 3rem; margin-bottom: 20px; font-weight: 800; }
+    .auth-left p { font-size: 1.1rem; opacity: 0.9; max-width: 400px; }
+    
+    .auth-form { width: 100%; max-width: 380px; }
+    .auth-form h2 { font-size: 1.8rem; margin-bottom: 10px; font-weight: 700; }
+    .auth-form .subtext { color: #9ca3af; margin-bottom: 30px; font-size: 0.9rem; }
+    .auth-form input { width: 100%; padding: 12px 14px; margin-bottom: 12px; border: 1px solid #374151; border-radius: 8px; background: #111827; color: #e4e6eb; font-size: 0.95rem; transition: border-color 0.2s; }
+    .auth-form input:focus { outline: none; border-color: #667eea; }
+    .auth-form button { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; margin-top: 8px; }
+    .auth-form button:hover { opacity: 0.9; }
+    .auth-form .toggle { text-align: center; margin-top: 20px; color: #9ca3af; }
+    .auth-form .toggle a { cursor: pointer; color: #667eea; font-weight: 600; }
+
+    /* Main Feed */
+    .feed-wrapper { max-width: 600px; margin: 0 auto; }
+    .sidebar { position: fixed; left: 0; top: 0; width: 280px; height: 100vh; background: #111827; border-right: 1px solid #1f2937; padding: 20px; overflow-y: auto; }
+    .sidebar h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .sidebar-section { margin-bottom: 30px; }
+    .sidebar-section h3 { font-size: 0.8rem; text-transform: uppercase; color: #6b7280; font-weight: 700; margin-bottom: 12px; letter-spacing: 0.5px; }
+    .profile-card { background: #1f2937; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+    .profile-card .name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .profile-card .username { color: #9ca3af; font-size: 0.9rem; margin-bottom: 12px; }
+    .profile-card .stats { display: flex; justify-content: space-around; font-size: 0.9rem; }
+    .profile-card .stat { text-align: center; }
+    .profile-card .stat-num { font-weight: 700; color: #60a5fa; }
+    .profile-card .stat-label { color: #6b7280; font-size: 0.8rem; }
+    .btn-logout { width: 100%; padding: 10px; background: #dc2626; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+    .btn-logout:hover { background: #b91c1c; }
+
+    .feed-container { margin-left: 280px; padding: 20px; }
+    .feed-header { padding: 20px 0; border-bottom: 1px solid #1f2937; margin-bottom: 20px; }
+    .feed-header h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 16px; }
+    .compose-card { background: #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid #374151; }
+    .compose-card textarea { width: 100%; padding: 12px; border: 1px solid #374151; border-radius: 8px; background: #111827; color: #e4e6eb; font-family: inherit; font-size: 1rem; resize: vertical; min-height: 60px; margin-bottom: 12px; }
+    .compose-card textarea:focus { outline: none; border-color: #667eea; }
+    .compose-card input { width: 100%; padding: 8px 12px; border: 1px solid #374151; border-radius: 6px; background: #111827; color: #e4e6eb; font-size: 0.9rem; margin-bottom: 10px; }
+    .compose-controls { display: flex; gap: 8px; }
+    .compose-controls button { flex: 1; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
+    .compose-controls button:hover { opacity: 0.9; }
+
+    .post-card { background: #1f2937; border-radius: 12px; padding: 20px; margin-bottom: 16px; border: 1px solid #374151; }
+    .post-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+    .post-author { display: flex; flex-direction: column; }
+    .post-author-name { font-weight: 700; font-size: 0.95rem; }
+    .post-author-handle { color: #9ca3af; font-size: 0.85rem; }
+    .post-time { color: #6b7280; font-size: 0.85rem; }
+    .post-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .post-content { color: #d1d5db; font-size: 0.95rem; margin-bottom: 12px; line-height: 1.5; }
+    .post-tags { margin-bottom: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { display: inline-block; background: #2d3748; color: #60a5fa; padding: 4px 10px; border-radius: 16px; font-size: 0.8rem; }
+    .post-footer { display: flex; gap: 20px; padding-top: 12px; border-top: 1px solid #374151; }
+    .post-action { display: flex; align-items: center; gap: 6px; color: #9ca3af; font-size: 0.9rem; cursor: pointer; transition: color 0.2s; }
+    .post-action:hover { color: #60a5fa; }
+    .post-action.liked { color: #ef4444; }
+    .search-bar { width: 100%; padding: 10px 12px; border: 1px solid #374151; border-radius: 8px; background: #111827; color: #e4e6eb; font-size: 0.95rem; margin-bottom: 16px; }
+    .search-bar:focus { outline: none; border-color: #667eea; }
+
+    .sort-select { width: 100%; padding: 8px 12px; border: 1px solid #374151; border-radius: 6px; background: #111827; color: #e4e6eb; font-size: 0.9rem; margin-bottom: 16px; cursor: pointer; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .feed-container { margin-left: 0; }
+      .auth-container { flex-direction: column; }
+      .auth-left { min-height: auto; padding: 20px; }
+      .auth-left h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth Views -->
+<div id="signup-view" class="view active">
+  <div class="auth-container">
+    <div class="auth-split auth-left">
+      <div>
+        <h1>SocialHub</h1>
+        <p>Connect with creators, share your thoughts, and build your community.</p>
+      </div>
+    </div>
+    <div class="auth-split">
+      <div class="auth-form">
+        <h2>Create account</h2>
+        <p class="subtext">Join the conversation</p>
+        <input id="su-first" type="text" placeholder="First name" />
+        <input id="su-last" type="text" placeholder="Last name" />
+        <input id="su-username" type="text" placeholder="Choose a username" />
+        <input id="su-email" type="email" placeholder="Email address" />
+        <input id="su-password" type="password" placeholder="Password (min 6 chars)" />
+        <button onclick="signup()">Sign up</button>
+        <div class="toggle">Already have an account? <a onclick="switchView('login')">Log in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="login-view" class="view">
+  <div class="auth-container">
+    <div class="auth-split auth-left">
+      <div>
+        <h1>SocialHub</h1>
+        <p>Welcome back. Your feed is waiting.</p>
+      </div>
+    </div>
+    <div class="auth-split">
+      <div class="auth-form">
+        <h2>Log in</h2>
+        <p class="subtext">Enter your credentials</p>
+        <input id="login-identifier" type="text" placeholder="Username or email" />
+        <input id="login-password" type="password" placeholder="Password" />
+        <button onclick="login()">Log in</button>
+        <div class="toggle">Don't have an account? <a onclick="switchView('signup')">Sign up</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feed View -->
+<div id="feed-view" class="view">
+  <div class="sidebar">
+    <h2>SocialHub</h2>
+    <div class="sidebar-section">
+      <div id="profile-card" class="profile-card">
+        <div class="name" id="profile-name">Loading...</div>
+        <div class="username" id="profile-username">@username</div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num" id="profile-posts">0</div>
+            <div class="stat-label">Posts</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="profile-following">0</div>
+            <div class="stat-label">Following</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="profile-followers">0</div>
+            <div class="stat-label">Followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="/chat.html" style="display: block; padding: 12px; background: #2d3748; color: #60a5fa; text-align: center; border-radius: 8px; font-weight: 600; margin-bottom: 8px; text-decoration: none; margin-top: 20px;">💬 Messages</a>
+    <button class="btn-logout" onclick="logout()">Log out</button>
+  </div>
+
+  <div class="feed-container">
+    <div class="feed-header">
+      <h1>Your Feed</h1>
+    </div>
+
+    <div class="compose-card">
+      <textarea id="post-content" placeholder="What's on your mind?"></textarea>
+      <input id="post-title" type="text" placeholder="Title (optional)" />
+      <input id="post-tags" type="text" placeholder="Add tags, separated by commas (optional)" />
+      <div class="compose-controls">
+        <button onclick="createPost()">Post</button>
+      </div>
+    </div>
+
+    <input class="search-bar" id="search" type="text" placeholder="🔍 Search posts by title, tags, or author..." onkeyup="debounceSearch()" />
+    <select class="sort-select" id="sort" onchange="loadFeed()">
+      <option value="-timestamp">Newest first</option>
+      <option value="-like_count">Most liked</option>
+      <option value="-comment_count">Most commented</option>
+    </select>
+
+    <div id="posts"></div>
+  </div>
+</div>
+
+<script>
+const API = '/api';
+let token = localStorage.getItem('token') || '';
+let currentUser = null;
+let searchTimeout;
+
+function switchView(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(view + '-view').classList.add('active');
+}
+
+function showNotification(msg, type = 'info') {
+  alert(msg); // Simple alert; could be replaced with toast
+}
+
+function authHeaders() {
+  return token ? { Authorization: 'Bearer ' + token } : {};
+}
+
+async function signup() {
+  const body = {
+    first_name: val('su-first'),
+    last_name: val('su-last'),
+    username: val('su-username'),
+    email: val('su-email'),
+    password: val('su-password'),
+  };
+  const res = await fetch(`${API}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (data.token) {
+    token = data.token;
+    localStorage.setItem('token', token);
+    currentUser = data.user;
+    showNotification(`Welcome, ${data.user.first_name}!`);
+    loadFeed();
+    switchView('feed');
+  } else {
+    showNotification('Error: ' + (data.message || 'Sign up failed'));
+  }
+}
+
+async function login() {
+  const body = {
+    identifier: val('login-identifier'),
+    password: val('login-password'),
+  };
+  const res = await fetch(`${API}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (data.token) {
+    token = data.token;
+    localStorage.setItem('token', token);
+    currentUser = data.user;
+    showNotification(`Welcome back, ${data.user.first_name}!`);
+    loadFeed();
+    switchView('feed');
+  } else {
+    showNotification('Error: ' + (data.message || 'Login failed'));
+  }
+}
+
+async function logout() {
+  token = '';
+  currentUser = null;
+  localStorage.removeItem('token');
+  switchView('signup');
+  document.getElementById('su-first').value = '';
+  document.getElementById('su-last').value = '';
+  document.getElementById('su-username').value = '';
+  document.getElementById('su-email').value = '';
+  document.getElementById('su-password').value = '';
+}
+
+async function createPost() {
+  if (!token) {
+    showNotification('Please log in first');
+    return;
+  }
+  const title = val('post-title') || 'Untitled';
+  const content = val('post-content');
+  if (!content.trim()) {
+    showNotification('Post cannot be empty');
+    return;
+  }
+  const body = {
+    title,
+    content,
+    tags: val('post-tags')
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean),
+  };
+  const res = await fetch(`${API}/posts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (data.post) {
+    showNotification('✨ Posted!');
+    document.getElementById('post-title').value = '';
+    document.getElementById('post-content').value = '';
+    document.getElementById('post-tags').value = '';
+    loadFeed();
+  } else {
+    showNotification('Error: ' + (data.message || 'Failed to post'));
+  }
+}
+
+function debounceSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => loadFeed(), 300);
+}
+
+async function loadFeed() {
+  const search = val('search');
+  const sort = document.getElementById('sort').value;
+  const qs = new URLSearchParams({ sort, ...(search ? { search } : {}) });
+  const res = await fetch(`${API}/posts?${qs.toString()}`, {
+    headers: authHeaders(),
+  });
+  const data = await res.json();
+  const container = document.getElementById('posts');
+  container.innerHTML = '';
+  (data.data || []).forEach((p) => {
+    const timeAgo = getTimeAgo(new Date(p.createdAt));
+    const tagsHtml = (p.tags || []).map((t) => `<span class="tag">#${t}</span>`).join('');
+    const isLiked = p.liked_by_me || false;
+    const div = document.createElement('div');
+    div.className = 'post-card';
+    div.innerHTML = `
+      <div class="post-header">
+        <div class="post-author">
+          <div class="post-author-name">${p.author?.first_name} ${p.author?.last_name}</div>
+          <div class="post-author-handle">@${p.author?.username}</div>
+        </div>
+        <div class="post-time">${timeAgo}</div>
+      </div>
+      ${p.title ? `<div class="post-title">${escapeHtml(p.title)}</div>` : ''}
+      <div class="post-content">${escapeHtml(p.content)}</div>
+      ${tagsHtml ? `<div class="post-tags">${tagsHtml}</div>` : ''}
+      <div class="post-footer">
+        <div class="post-action ${isLiked ? 'liked' : ''}" onclick="toggleLike('${p._id}', this)">
+          ${isLiked ? '❤️' : '🤍'} <span>${p.like_count}</span>
+        </div>
+        <div class="post-action">💬 <span>${p.comment_count}</span></div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  if (!data.data || !data.data.length) {
+    container.innerHTML = '<div class="post-card"><p style="color: #9ca3af; text-align: center;">No posts yet. Be the first to share something!</p></div>';
+  }
+}
+
+async function toggleLike(postId, elem) {
+  if (!token) {
+    showNotification('Please log in to like posts');
+    return;
+  }
+  const isLiked = elem.classList.contains('liked');
+  const method = isLiked ? 'DELETE' : 'POST';
+  const res = await fetch(`${API}/posts/${postId}/like`, {
+    method,
+    headers: authHeaders(),
+  });
+  if (res.ok) {
+    loadFeed();
+  } else {
+    const err = await res.json();
+    showNotification('Error: ' + err.message);
+  }
+}
+
+function getTimeAgo(date) {
+  const now = new Date();
+  const secs = Math.floor((now - date) / 1000);
+  if (secs < 60) return 'now';
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return mins + 'm ago';
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return hours + 'h ago';
+  const days = Math.floor(hours / 24);
+  return days + 'd ago';
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function val(id) {
+  return document.getElementById(id).value.trim();
+}
+
+// Initialize
+if (token) {
+  loadFeed();
+  switchView('feed');
+  fetch(`${API}/auth/me`, { headers: authHeaders() })
+    .then((r) => r.json())
+    .then((d) => {
+      if (d.user) {
+        currentUser = d.user;
+        document.getElementById('profile-name').textContent = `${d.user.first_name} ${d.user.last_name}`;
+        document.getElementById('profile-username').textContent = `@${d.user.username}`;
+        document.getElementById('profile-followers').textContent = d.user.followers_count;
+        document.getElementById('profile-following').textContent = d.user.following_count;
+      }
+    });
+} else {
+  switchView('signup');
+}
+</script>
+
+</body>
+</html>
