@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Follow = require('../models/Follow');
 const { getPagination, buildPaginatedResponse } = require('../utils/paginate');
 
-// POST /api/users/:id/follow
+
 async function followUser(req, res, next) {
   try {
     const targetId = req.params.id;
@@ -34,7 +34,7 @@ async function followUser(req, res, next) {
   }
 }
 
-// DELETE /api/users/:id/follow
+
 async function unfollowUser(req, res, next) {
   try {
     const targetId = req.params.id;
@@ -55,7 +55,7 @@ async function unfollowUser(req, res, next) {
   }
 }
 
-// GET /api/users/:id/following - users that :id follows
+
 async function getFollowing(req, res, next) {
   try {
     const { page, limit, skip } = getPagination(req.query, 20);
@@ -77,7 +77,7 @@ async function getFollowing(req, res, next) {
   }
 }
 
-// GET /api/users/:id/followers - users that follow :id
+
 async function getFollowers(req, res, next) {
   try {
     const { page, limit, skip } = getPagination(req.query, 20);
@@ -99,7 +99,7 @@ async function getFollowers(req, res, next) {
   }
 }
 
-// GET /api/users/:id - basic public profile
+
 async function getUserProfile(req, res, next) {
   try {
     const user = await User.findById(req.params.id);
