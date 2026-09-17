@@ -10,11 +10,11 @@
     a { color: #60a5fa; text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    /* Views */
+    
     .view { display: none; }
     .view.active { display: block; }
 
-    /* Auth Pages */
+    
     .auth-container { min-height: 100vh; display: flex; }
     .auth-split { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; }
     .auth-left { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
@@ -31,7 +31,7 @@
     .auth-form .toggle { text-align: center; margin-top: 20px; color: #9ca3af; }
     .auth-form .toggle a { cursor: pointer; color: #667eea; font-weight: 600; }
 
-    /* Main Feed */
+    
     .feed-wrapper { max-width: 600px; margin: 0 auto; }
     .sidebar { position: fixed; left: 0; top: 0; width: 280px; height: 100vh; background: #111827; border-right: 1px solid #1f2937; padding: 20px; overflow-y: auto; }
     .sidebar h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -88,7 +88,7 @@
 </head>
 <body>
 
-<!-- Auth Views -->
+
 <div id="signup-view" class="view active">
   <div class="auth-container">
     <div class="auth-split auth-left">
@@ -134,7 +134,7 @@
   </div>
 </div>
 
-<!-- Feed View -->
+
 <div id="feed-view" class="view">
   <div class="sidebar">
     <h2>SocialHub</h2>
@@ -199,7 +199,7 @@ function switchView(view) {
 }
 
 function showNotification(msg, type = 'info') {
-  alert(msg); // Simple alert; could be replaced with toast
+  alert(msg); 
 }
 
 function authHeaders() {
