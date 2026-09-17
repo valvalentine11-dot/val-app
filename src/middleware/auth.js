@@ -7,7 +7,7 @@ function extractToken(req) {
   return null;
 }
 
-// Requires a valid, non-expired JWT. Attaches req.user.
+
 async function requireAuth(req, res, next) {
   try {
     const token = extractToken(req);
@@ -29,7 +29,7 @@ async function requireAuth(req, res, next) {
   }
 }
 
-// Does not fail if there's no/invalid token, but attaches req.user if valid.
+
 async function optionalAuth(req, res, next) {
   try {
     const token = extractToken(req);
