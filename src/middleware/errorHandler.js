@@ -14,7 +14,7 @@ function errorHandler(err, req, res, next) {
   if (err.name === 'CastError') {
     return res.status(400).json({ message: `Invalid identifier: ${err.value}` });
   }
-  console.error(err); // eslint-disable-line no-console
+  console.error(err); 
   const status = err.statusCode || 500;
   res.status(status).json({ message: err.message || 'Internal server error' });
 }
