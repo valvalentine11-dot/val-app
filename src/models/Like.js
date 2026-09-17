@@ -8,7 +8,7 @@ const likeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Prevent a user from liking the same post more than once
+
 likeSchema.index({ user: 1, post: 1 }, { unique: true });
 
 module.exports = mongoose.model('Like', likeSchema);
