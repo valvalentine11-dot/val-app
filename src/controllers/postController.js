@@ -34,7 +34,7 @@ async function buildSearchFilter(search) {
   };
 }
 
-// GET /api/posts - public, published only, paginated/searchable/sortable
+
 async function listPublishedPosts(req, res, next) {
   try {
     const { page, limit, skip } = getPagination(req.query, 20);
@@ -53,7 +53,7 @@ async function listPublishedPosts(req, res, next) {
   }
 }
 
-// GET /api/posts/:id - public if published; owner can view their own draft too
+
 async function getPost(req, res, next) {
   try {
     const post = await Post.findById(req.params.id).populate(
@@ -78,7 +78,7 @@ async function getPost(req, res, next) {
   }
 }
 
-// GET /api/posts/me - owner's own posts, paginated + filterable by state
+
 async function getMyPosts(req, res, next) {
   try {
     const { page, limit, skip } = getPagination(req.query, 20);
@@ -99,7 +99,7 @@ async function getMyPosts(req, res, next) {
   }
 }
 
-// GET /api/posts/feed - logged in user's own posts (any state) + published posts from followed users
+
 async function getFeed(req, res, next) {
   try {
     const Follow = require('../models/Follow');
@@ -127,7 +127,7 @@ async function getFeed(req, res, next) {
   }
 }
 
-// POST /api/posts - always created as draft
+
 async function createPost(req, res, next) {
   try {
     const errors = validationResult(req);
@@ -159,7 +159,7 @@ async function findOwnedPost(req) {
   return { post };
 }
 
-// PATCH /api/posts/:id - owner can edit in draft or published state
+
 async function updatePost(req, res, next) {
   try {
     const errors = validationResult(req);
@@ -182,7 +182,7 @@ async function updatePost(req, res, next) {
   }
 }
 
-// PATCH /api/posts/:id/publish - owner only, draft -> published
+
 async function publishPost(req, res, next) {
   try {
     const { post, error, message } = await findOwnedPost(req);
@@ -196,7 +196,7 @@ async function publishPost(req, res, next) {
   }
 }
 
-// DELETE /api/posts/:id - owner only, any state
+
 async function deletePost(req, res, next) {
   try {
     const { post, error, message } = await findOwnedPost(req);
@@ -209,7 +209,7 @@ async function deletePost(req, res, next) {
   }
 }
 
-// POST /api/posts/:id/like
+
 async function likePost(req, res, next) {
   try {
     const post = await Post.findById(req.params.id);
@@ -235,7 +235,7 @@ async function likePost(req, res, next) {
   }
 }
 
-// DELETE /api/posts/:id/like
+
 async function unlikePost(req, res, next) {
   try {
     const post = await Post.findById(req.params.id);
