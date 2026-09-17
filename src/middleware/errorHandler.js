@@ -2,7 +2,7 @@ function notFound(req, res, next) {
   res.status(404).json({ message: `Route not found: ${req.method} ${req.originalUrl}` });
 }
 
-// eslint-disable-next-line no-unused-vars
+
 function errorHandler(err, req, res, next) {
   if (err.name === 'ValidationError') {
     return res.status(400).json({ message: err.message });
